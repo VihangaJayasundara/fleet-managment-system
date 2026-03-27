@@ -36,7 +36,7 @@ router.get('/:id', async (req, res) => {
       LEFT JOIN vehicles v ON p.vehicle_id = v.id
       WHERE p.id = ?
     `, [req.params.id]);
-    
+
     if (parcels.length === 0) {
       return res.status(404).json({ error: 'Parcel not found' });
     }
@@ -50,13 +50,13 @@ router.get('/:id', async (req, res) => {
 // Create new parcel
 router.post('/', async (req, res) => {
   try {
-    const { tracking_id, status, origin, destination, driver_id, vehicle_id } = req.body;
-    
+    const { tracking_id, status, origin, destination, driver_id, vehicle_id, weight } = req.body;
+
     const [result] = await pool.query(
-      'INSERT INTO parcels (tracking_id, status, origin, destination, driver_id, vehicle_id) VALUES (?, ?, ?, ?, ?, ?)',
-      [tracking_id, status || 'Picked Up', origin, destination, driver_id || null, vehicle_id || null]
+      'INSERT INTO parcels (tracking_id, status, origin, destination, driver_id, vehicle_id, weight) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [tracking_id, status || 'Picked Up', origin, destination, driver_id || null, vehicle_id || null, weight || 0]
     );
-    
+
     const [newParcel] = await pool.query(`
       SELECT 
         p.*,
@@ -67,7 +67,7 @@ router.post('/', async (req, res) => {
       LEFT JOIN vehicles v ON p.vehicle_id = v.id
       WHERE p.id = ?
     `, [result.insertId]);
-    
+
     res.status(201).json(newParcel[0]);
   } catch (error) {
     console.error('Error creating parcel:', error);
@@ -78,18 +78,18 @@ router.post('/', async (req, res) => {
 // Update parcel
 router.put('/:id', async (req, res) => {
   try {
-    const { tracking_id, status, origin, destination, driver_id, vehicle_id } = req.body;
+    const { tracking_id, status, origin, destination, driver_id, vehicle_id, weight } = req.body;
     const parcelId = req.params.id;
-    
+
     const [result] = await pool.query(
-      'UPDATE parcels SET tracking_id = ?, status = ?, origin = ?, destination = ?, driver_id = ?, vehicle_id = ? WHERE id = ?',
-      [tracking_id, status, origin, destination, driver_id || null, vehicle_id || null, parcelId]
+      'UPDATE parcels SET tracking_id = ?, status = ?, origin = ?, destination = ?, driver_id = ?, vehicle_id = ?, weight = ? WHERE id = ?',
+      [tracking_id, status, origin, destination, driver_id || null, vehicle_id || null, weight || 0, parcelId]
     );
-    
+
     if (result.affectedRows === 0) {
       return res.status(404).json({ error: 'Parcel not found' });
     }
-    
+
     const [updatedParcel] = await pool.query(`
       SELECT 
         p.*,
@@ -100,7 +100,7 @@ router.put('/:id', async (req, res) => {
       LEFT JOIN vehicles v ON p.vehicle_id = v.id
       WHERE p.id = ?
     `, [parcelId]);
-    
+
     res.json(updatedParcel[0]);
   } catch (error) {
     console.error('Error updating parcel:', error);
@@ -112,11 +112,11 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
   try {
     const [result] = await pool.query('DELETE FROM parcels WHERE id = ?', [req.params.id]);
-    
+
     if (result.affectedRows === 0) {
       return res.status(404).json({ error: 'Parcel not found' });
     }
-    
+
     res.json({ message: 'Parcel deleted successfully' });
   } catch (error) {
     console.error('Error deleting parcel:', error);

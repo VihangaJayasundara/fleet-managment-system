@@ -1,13 +1,23 @@
 import express from 'express';
 import pool from '../config/database.js';
 
-
 const router = express.Router();
 
-// Get all drivers
+// Get all drivers with optional vehicle_type filter
 router.get('/', async (req, res) => {
   try {
-    const [drivers] = await pool.query('SELECT * FROM drivers ORDER BY id DESC');
+    const { vehicle_type } = req.query;
+    let query = 'SELECT * FROM drivers';
+    const params = [];
+    
+    if (vehicle_type) {
+      query += ' WHERE vehicle_type = ?';
+      params.push(vehicle_type);
+    }
+    
+    query += ' ORDER BY id DESC';
+    
+    const [drivers] = await pool.query(query, params);
     res.json(drivers);
   } catch (error) {
     console.error('Error fetching drivers:', error);
@@ -32,11 +42,11 @@ router.get('/:id', async (req, res) => {
 // Create new driver
 router.post('/', async (req, res) => {
   try {
-    const { name, phone, license_number, status } = req.body;
+    const { name, phone, license_number, vehicle_type, status } = req.body;
     
     const [result] = await pool.query(
-      'INSERT INTO drivers (name, phone, license_number, status) VALUES (?, ?, ?, ?)',
-      [name, phone, license_number, status || 'Active']
+      'INSERT INTO drivers (name, phone, license_number, vehicle_type, status) VALUES (?, ?, ?, ?, ?)',
+      [name, phone, license_number, vehicle_type, status || 'Active']
     );
     
     const [newDriver] = await pool.query('SELECT * FROM drivers WHERE id = ?', [result.insertId]);
@@ -50,12 +60,12 @@ router.post('/', async (req, res) => {
 // Update driver
 router.put('/:id', async (req, res) => {
   try {
-    const { name, phone, license_number, status } = req.body;
+    const { name, phone, license_number, vehicle_type, status } = req.body;
     const driverId = req.params.id;
     
     const [result] = await pool.query(
-      'UPDATE drivers SET name = ?, phone = ?, license_number = ?, status = ? WHERE id = ?',
-      [name, phone, license_number, status, driverId]
+      'UPDATE drivers SET name = ?, phone = ?, license_number = ?, vehicle_type = ?, status = ? WHERE id = ?',
+      [name, phone, license_number, vehicle_type, status, driverId]
     );
     
     if (result.affectedRows === 0) {
