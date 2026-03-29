@@ -1,7 +1,6 @@
 import * as React from "react"
 import { cn } from "@/lib/utils"
 
-
 const Tabs = ({ defaultValue, value, onValueChange, children, className }) => {
   const [tabValue, setTabValue] = React.useState(value || defaultValue)
   

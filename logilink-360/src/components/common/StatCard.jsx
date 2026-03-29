@@ -8,8 +8,8 @@ export default function StatCard({ title, value, description, icon: Icon, trend 
           {title}
         </CardTitle>
         {Icon && (
-          <div className="h-8 w-8 rounded-lg bg-secondary/20 flex items-center justify-center">
-            <Icon className="h-4 w-4 text-secondary" />
+          <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
+            <Icon className="h-4 w-4 text-primary" />
           </div>
         )}
       </CardHeader>

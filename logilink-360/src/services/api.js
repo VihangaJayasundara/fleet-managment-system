@@ -1,6 +1,5 @@
 const API_BASE_URL = '/api';
 
-
 // Helper function for API calls
 async function fetchAPI(endpoint, options = {}) {
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
@@ -11,7 +10,8 @@ async function fetchAPI(endpoint, options = {}) {
   });
 
   if (!response.ok) {
-    throw new Error(`API error: ${response.status}`);
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || `API error: ${response.status}`);
   }
 
   return response.json();
