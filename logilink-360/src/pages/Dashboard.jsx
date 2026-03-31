@@ -102,7 +102,7 @@ export default function Dashboard() {
         <StatCard
           title="On-Time Rate"
           value="94.2%"
-         description="Delivery performance"
+          description="Delivery performance"
           icon={CheckCircle}
         />
       </div>
@@ -122,11 +122,10 @@ export default function Dashboard() {
                     <p className="text-xs text-muted-foreground">{item.location}</p>
                   </div>
                   <div className="text-right">
-                    <span className={`text-xs px-2 py-1 rounded-full ${
-                      item.status === 'Delivered' ? 'bg-green-100 text-green-700 border border-green-200' :
-                      item.status === 'In Transit' ? 'bg-blue-100 text-blue-700 border border-blue-200' :
-                      'bg-yellow-100 text-yellow-700 border border-yellow-200'
-                    }`}>
+                    <span className={`text-xs px-2 py-1 rounded-full ${item.status === 'Delivered' ? 'bg-green-500/10 text-green-500 border border-green-500/20' :
+                      item.status === 'In Transit' ? 'bg-blue-500/10 text-blue-500 border border-blue-500/20' :
+                        'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20'
+                      }`}>
                       {item.status}
                     </span>
                     <p className="text-xs text-muted-foreground mt-1">{item.time}</p>
@@ -150,17 +149,16 @@ export default function Dashboard() {
                       <p className="text-sm font-medium text-foreground">{item.vehicle}</p>
                       <p className="text-xs text-muted-foreground">{item.driver}</p>
                     </div>
-                    <span className={`text-xs px-2 py-1 rounded-full ${
-                      item.status === 'Active' ? 'bg-green-100 text-green-700 border border-green-200' :
-                      'bg-red-100 text-red-700 border border-red-200'
-                    }`}>
+                    <span className={`text-xs px-2 py-1 rounded-full ${item.status === 'Active' ? 'bg-green-500/10 text-green-500 border border-green-500/20' :
+                      'bg-red-500/10 text-red-500 border border-red-500/20'
+                      }`}>
                       {item.status}
                     </span>
                   </div>
                   {item.status === 'Active' && (
                     <div className="h-1.5 bg-muted rounded-full overflow-hidden">
-                      <div 
-                        className="h-full bg-accent rounded-full"
+                      <div
+                        className="h-full bg-primary rounded-full transition-all duration-500"
                         style={{ width: `${item.progress}%` }}
                       />
                     </div>

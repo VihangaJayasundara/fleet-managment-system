@@ -11,7 +11,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { driversAPI } from '@/services/api'
 
-
 const shiftSchedule = [
   { driver: 'Kamal Perera', day: 'Mon', start: '06:00', end: '14:00', status: 'Scheduled' },
   { driver: 'Sunil Silva', day: 'Mon', start: '14:00', end: '22:00', status: 'Scheduled' },
@@ -26,7 +25,7 @@ export default function DriverManagement() {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [selectedDriver, setSelectedDriver] = useState(null)
-  const [formData, setFormData] = useState({ name: '', license_number: '', phone: '', status: 'Active' })
+  const [formData, setFormData] = useState({ name: '', license_number: '', phone: '', vehicle_type: '', status: 'Active' })
 
   // Fetch drivers from database
   useEffect(() => {
@@ -48,26 +47,40 @@ export default function DriverManagement() {
 
   const handleAddDriver = async () => {
     try {
-      await driversAPI.create(formData)
+      // Validate phone number: must be 10 digits
+      const cleanedPhone = formData.phone.replace(/\D/g, '')
+      if (cleanedPhone.length !== 10) {
+        alert('Validation Error: Phone number must contain exactly 10 digits.')
+        return
+      }
+
+      await driversAPI.create({ ...formData, phone: cleanedPhone })
       await fetchDrivers()
       setIsAddDialogOpen(false)
-      setFormData({ name: '', license_number: '', phone: '', status: 'Active' })
+      setFormData({ name: '', license_number: '', phone: '', vehicle_type: '', status: 'Active' })
     } catch (error) {
       console.error('Error adding driver:', error)
-      alert('Failed to add driver')
+      alert(`Failed to add driver: ${error.message || 'Unknown error'}`)
     }
   }
 
   const handleEditDriver = async () => {
     try {
-      await driversAPI.update(selectedDriver.id, formData)
+      // Validate phone number: must be 10 digits
+      const cleanedPhone = formData.phone.replace(/\D/g, '')
+      if (cleanedPhone.length !== 10) {
+        alert('Validation Error: Phone number must contain exactly 10 digits.')
+        return
+      }
+
+      await driversAPI.update(selectedDriver.id, { ...formData, phone: cleanedPhone })
       await fetchDrivers()
       setIsEditDialogOpen(false)
       setSelectedDriver(null)
-      setFormData({ name: '', license_number: '', phone: '', status: 'Active' })
+      setFormData({ name: '', license_number: '', phone: '', vehicle_type: '', status: 'Active' })
     } catch (error) {
       console.error('Error updating driver:', error)
-      alert('Failed to update driver')
+      alert(`Failed to update driver: ${error.message || 'Unknown error'}`)
     }
   }
 
@@ -79,7 +92,7 @@ export default function DriverManagement() {
       setSelectedDriver(null)
     } catch (error) {
       console.error('Error deleting driver:', error)
-      alert('Failed to delete driver')
+      alert(`Failed to delete driver: ${error.message || 'Unknown error'}`)
     }
   }
 
@@ -89,6 +102,7 @@ export default function DriverManagement() {
       name: driver.name,
       license_number: driver.license_number,
       phone: driver.phone,
+      vehicle_type: driver.vehicle_type || '',
       status: driver.status
     })
     setIsEditDialogOpen(true)
@@ -145,8 +159,8 @@ export default function DriverManagement() {
         </Card>
         <Card className="border-border bg-card">
           <CardContent className="p-4 flex items-center gap-4">
-            <div className="h-10 w-10 rounded-lg bg-green-900/30 flex items-center justify-center">
-              <Users className="h-5 w-5 text-green-400" />
+            <div className="h-10 w-10 rounded-lg bg-green-500/10 flex items-center justify-center">
+              <Users className="h-5 w-5 text-green-500" />
             </div>
             <div>
               <p className="text-2xl font-bold text-foreground">{drivers.filter(d => d.status === 'Active').length}</p>
@@ -156,8 +170,8 @@ export default function DriverManagement() {
         </Card>
         <Card className="border-border bg-card">
           <CardContent className="p-4 flex items-center gap-4">
-            <div className="h-10 w-10 rounded-lg bg-yellow-900/30 flex items-center justify-center">
-              <Clock className="h-5 w-5 text-yellow-400" />
+            <div className="h-10 w-10 rounded-lg bg-yellow-500/10 flex items-center justify-center">
+              <Clock className="h-5 w-5 text-yellow-500" />
             </div>
             <div>
               <p className="text-2xl font-bold text-foreground">{drivers.filter(d => d.status === 'On Leave').length}</p>
@@ -167,7 +181,7 @@ export default function DriverManagement() {
         </Card>
         <Card className="border-border bg-card">
           <CardContent className="p-4 flex items-center gap-4">
-            <div className="h-10 w-10 rounded-lg bg-red-900/30 flex items-center justify-center">
+            <div className="h-10 w-10 rounded-lg bg-red-500/10 flex items-center justify-center">
               <FileCheck className="h-5 w-5 text-red-500" />
             </div>
             <div>
@@ -195,6 +209,7 @@ export default function DriverManagement() {
                     <TableHead>ID</TableHead>
                     <TableHead>Name</TableHead>
                     <TableHead>License</TableHead>
+                    <TableHead>Vehicle Type</TableHead>
                     <TableHead>Phone</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Created At</TableHead>
@@ -207,21 +222,22 @@ export default function DriverManagement() {
                       <TableCell className="font-medium">{driver.id}</TableCell>
                       <TableCell>{driver.name}</TableCell>
                       <TableCell>{driver.license_number}</TableCell>
+                      <TableCell>{driver.vehicle_type || '-'}</TableCell>
                       <TableCell>{driver.phone}</TableCell>
                       <TableCell>{getStatusBadge(driver.status)}</TableCell>
                       <TableCell>{new Date(driver.created_at).toLocaleDateString()}</TableCell>
                       <TableCell>
                         <div className="flex gap-2">
-                          <Button 
-                            variant="ghost" 
+                          <Button
+                            variant="ghost"
                             size="icon"
                             onClick={() => openEditDialog(driver)}
-                            className="h-8 w-8 text-muted-foreground hover:text-white"
+                            className="h-8 w-8 text-muted-foreground hover:text-primary"
                           >
                             <Pencil className="h-4 w-4" />
                           </Button>
-                          <Button 
-                            variant="ghost" 
+                          <Button
+                            variant="ghost"
                             size="icon"
                             onClick={() => openDeleteDialog(driver)}
                             className="h-8 w-8 text-muted-foreground hover:text-red-500"
@@ -282,18 +298,15 @@ export default function DriverManagement() {
             <CardContent>
               <div className="space-y-4">
                 {drivers.map((driver) => (
-                  <div key={driver.id} className={`flex items-center justify-between p-4 rounded-xl border ${
-                    driver.status === 'Active'
-                      ? 'bg-card border-border' 
-                      : 'bg-yellow-950/20 border-yellow-900/50'
-                  }`}>
+                  <div key={driver.id} className={`flex items-center justify-between p-4 rounded-xl border ${driver.status === 'Active'
+                    ? 'bg-card border-border'
+                    : 'bg-yellow-500/5 border-yellow-500/20'
+                    }`}>
                     <div className="flex items-center gap-4">
-                      <div className={`h-10 w-10 rounded-lg flex items-center justify-center ${
-                        driver.status === 'Active' ? 'bg-green-900/30' : 'bg-yellow-900/30'
-                      }`}>
-                        <Clock className={`h-5 w-5 ${
-                          driver.status === 'Active' ? 'text-green-400' : 'text-yellow-400'
-                        }`} />
+                      <div className={`h-10 w-10 rounded-lg flex items-center justify-center ${driver.status === 'Active' ? 'bg-green-500/10' : 'bg-yellow-500/10'
+                        }`}>
+                        <Clock className={`h-5 w-5 ${driver.status === 'Active' ? 'text-green-500' : 'text-yellow-500'
+                          }`} />
                       </div>
                       <div>
                         <p className="font-medium text-foreground">{driver.name}</p>
@@ -301,9 +314,8 @@ export default function DriverManagement() {
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className={`text-lg font-bold ${
-                        driver.status === 'Active' ? 'text-green-400' : 'text-yellow-400'
-                      }`}>
+                      <p className={`text-lg font-bold ${driver.status === 'Active' ? 'text-green-500' : 'text-yellow-500'
+                        }`}>
                         {driver.status}
                       </p>
                       <p className="text-xs text-muted-foreground">
@@ -362,33 +374,50 @@ export default function DriverManagement() {
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <Label>Full Name</Label>
-              <Input 
+              <Input
                 placeholder="e.g., Kamal Perera"
                 value={formData.name}
-                onChange={(e) => setFormData({...formData, name: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               />
             </div>
             <div className="space-y-2">
               <Label>License Number</Label>
-              <Input 
+              <Input
                 placeholder="e.g., B1234567"
                 value={formData.license_number}
-                onChange={(e) => setFormData({...formData, license_number: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, license_number: e.target.value })}
               />
             </div>
             <div className="space-y-2">
               <Label>Phone Number</Label>
-              <Input 
+              <Input
                 placeholder="e.g., 077-123-4567"
                 value={formData.phone}
-                onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
               />
             </div>
             <div className="space-y-2">
+              <Label>Vehicle Type</Label>
+              <Select
+                value={formData.vehicle_type}
+                onValueChange={(value) => setFormData({ ...formData, vehicle_type: value })}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select vehicle type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Lorry">Lorry</SelectItem>
+                  <SelectItem value="Van">Van</SelectItem>
+                  <SelectItem value="Motorcycle">Motorcycle</SelectItem>
+                  <SelectItem value="Truck">Truck</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
               <Label>Status</Label>
-              <Select 
-                value={formData.status} 
-                onValueChange={(value) => setFormData({...formData, status: value})}
+              <Select
+                value={formData.status}
+                onValueChange={(value) => setFormData({ ...formData, status: value })}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select status" />
@@ -422,30 +451,47 @@ export default function DriverManagement() {
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <Label>Full Name</Label>
-              <Input 
+              <Input
                 value={formData.name}
-                onChange={(e) => setFormData({...formData, name: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               />
             </div>
             <div className="space-y-2">
               <Label>License Number</Label>
-              <Input 
+              <Input
                 value={formData.license_number}
-                onChange={(e) => setFormData({...formData, license_number: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, license_number: e.target.value })}
               />
             </div>
             <div className="space-y-2">
               <Label>Phone Number</Label>
-              <Input 
+              <Input
                 value={formData.phone}
-                onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
               />
             </div>
             <div className="space-y-2">
+              <Label>Vehicle Type</Label>
+              <Select
+                value={formData.vehicle_type}
+                onValueChange={(value) => setFormData({ ...formData, vehicle_type: value })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Lorry">Lorry</SelectItem>
+                  <SelectItem value="Van">Van</SelectItem>
+                  <SelectItem value="Motorcycle">Motorcycle</SelectItem>
+                  <SelectItem value="Truck">Truck</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
               <Label>Status</Label>
-              <Select 
-                value={formData.status} 
-                onValueChange={(value) => setFormData({...formData, status: value})}
+              <Select
+                value={formData.status}
+                onValueChange={(value) => setFormData({ ...formData, status: value })}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select status" />

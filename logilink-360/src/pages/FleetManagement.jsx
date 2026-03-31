@@ -11,7 +11,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { vehiclesAPI } from '@/services/api'
 
-
 export default function FleetManagement() {
   const [vehicles, setVehicles] = useState([])
   const [loading, setLoading] = useState(true)
@@ -46,6 +45,13 @@ export default function FleetManagement() {
 
   const handleAddVehicle = async () => {
     try {
+      // Validate vehicle number plate: 2-3 letters followed by 4 digits (hyphen optional)
+      const plateRegex = /^[A-Z]{2,3}-?\d{4}$/i
+      if (!plateRegex.test(formData.vehicle_number)) {
+        alert('Validation Error: Vehicle number must be 2-3 letters followed by 4 digits (e.g., NB-6789 or ABC-2345).')
+        return
+      }
+
       await vehiclesAPI.create(formData)
       await fetchVehicles()
       setIsAddDialogOpen(false)
@@ -58,6 +64,13 @@ export default function FleetManagement() {
 
   const handleEditVehicle = async () => {
     try {
+      // Validate vehicle number plate: 2-3 letters followed by 4 digits (hyphen optional)
+      const plateRegex = /^[A-Z]{2,3}-?\d{4}$/i
+      if (!plateRegex.test(formData.vehicle_number)) {
+        alert('Validation Error: Vehicle number must be 2-3 letters followed by 4 digits (e.g., NB-6789 or ABC-2345).')
+        return
+      }
+
       await vehiclesAPI.update(selectedVehicle.id, formData)
       await fetchVehicles()
       setIsEditDialogOpen(false)
@@ -143,8 +156,8 @@ export default function FleetManagement() {
         </Card>
         <Card className="border-border bg-card">
           <CardContent className="p-4 flex items-center gap-4">
-            <div className="h-10 w-10 rounded-lg bg-green-900/30 flex items-center justify-center">
-              <Truck className="h-5 w-5 text-green-400" />
+            <div className="h-10 w-10 rounded-lg bg-green-500/10 flex items-center justify-center">
+              <Truck className="h-5 w-5 text-green-500" />
             </div>
             <div>
               <p className="text-2xl font-bold text-foreground">{vehicles.filter(v => v.status === 'Active').length}</p>
@@ -154,8 +167,8 @@ export default function FleetManagement() {
         </Card>
         <Card className="border-border bg-card">
           <CardContent className="p-4 flex items-center gap-4">
-            <div className="h-10 w-10 rounded-lg bg-yellow-900/30 flex items-center justify-center">
-              <Wrench className="h-5 w-5 text-yellow-400" />
+            <div className="h-10 w-10 rounded-lg bg-yellow-500/10 flex items-center justify-center">
+              <Wrench className="h-5 w-5 text-yellow-500" />
             </div>
             <div>
               <p className="text-2xl font-bold text-foreground">{vehicles.filter(v => v.status === 'Maintenance').length}</p>
@@ -165,7 +178,7 @@ export default function FleetManagement() {
         </Card>
         <Card className="border-border bg-card">
           <CardContent className="p-4 flex items-center gap-4">
-            <div className="h-10 w-10 rounded-lg bg-red-900/30 flex items-center justify-center">
+            <div className="h-10 w-10 rounded-lg bg-red-500/10 flex items-center justify-center">
               <AlertTriangle className="h-5 w-5 text-red-500" />
             </div>
             <div>
@@ -211,16 +224,16 @@ export default function FleetManagement() {
                       <TableCell>{new Date(vehicle.created_at).toLocaleDateString()}</TableCell>
                       <TableCell>
                         <div className="flex gap-2">
-                          <Button 
-                            variant="ghost" 
+                          <Button
+                            variant="ghost"
                             size="icon"
                             onClick={() => openEditDialog(vehicle)}
-                            className="h-8 w-8 text-muted-foreground hover:text-white"
+                            className="h-8 w-8 text-muted-foreground hover:text-primary"
                           >
                             <Pencil className="h-4 w-4" />
                           </Button>
-                          <Button 
-                            variant="ghost" 
+                          <Button
+                            variant="ghost"
                             size="icon"
                             onClick={() => openDeleteDialog(vehicle)}
                             className="h-8 w-8 text-muted-foreground hover:text-red-500"
@@ -276,8 +289,8 @@ export default function FleetManagement() {
                 {vehicles.filter(v => v.status === 'Maintenance').map((vehicle) => (
                   <div key={vehicle.id} className="flex items-center justify-between p-4 bg-card rounded-xl border border-border">
                     <div className="flex items-center gap-4">
-                      <div className="h-10 w-10 rounded-lg bg-yellow-900/30 flex items-center justify-center">
-                        <AlertTriangle className="h-5 w-5 text-yellow-400" />
+                      <div className="h-10 w-10 rounded-lg bg-yellow-500/10 flex items-center justify-center">
+                        <AlertTriangle className="h-5 w-5 text-yellow-500" />
                       </div>
                       <div>
                         <p className="font-medium text-foreground">{vehicle.vehicle_number}</p>
@@ -309,16 +322,15 @@ export default function FleetManagement() {
                         <span className="text-sm font-medium text-foreground">{vehicle.vehicle_number}</span>
                         <span className="text-xs text-muted-foreground">{vehicle.type}</span>
                       </div>
-                      <span className={`text-sm font-medium ${vehicle.status === 'Active' ? 'text-green-400' : vehicle.status === 'Maintenance' ? 'text-yellow-400' : 'text-foreground'}`}>
+                      <span className={`text-sm font-medium ${vehicle.status === 'Active' ? 'text-green-500' : vehicle.status === 'Maintenance' ? 'text-yellow-500' : 'text-foreground'}`}>
                         {vehicle.status}
                       </span>
                     </div>
                     <div className="h-2 bg-muted rounded-full overflow-hidden">
-                      <div 
-                        className={`h-full rounded-full transition-all ${
-                          vehicle.status === 'Active' ? 'bg-green-500' : 
-                          vehicle.status === 'Maintenance' ? 'bg-yellow-500' : 'bg-zinc-400'
-                        }`}
+                      <div
+                        className={`h-full rounded-full transition-all ${vehicle.status === 'Active' ? 'bg-green-500' :
+                          vehicle.status === 'Maintenance' ? 'bg-yellow-500' : 'bg-slate-300'
+                          }`}
                         style={{ width: vehicle.status === 'Active' ? '100%' : vehicle.status === 'Maintenance' ? '50%' : '25%' }}
                       />
                     </div>
@@ -340,15 +352,15 @@ export default function FleetManagement() {
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <Label>Vehicle Number</Label>
-              <Input 
+              <Input
                 placeholder="e.g., Lorry-001"
                 value={formData.vehicle_number}
-                onChange={(e) => setFormData({...formData, vehicle_number: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, vehicle_number: e.target.value })}
               />
             </div>
             <div className="space-y-2">
               <Label>Vehicle Type</Label>
-              <Select value={formData.type} onValueChange={(value) => setFormData({...formData, type: value})}>
+              <Select value={formData.type} onValueChange={(value) => setFormData({ ...formData, type: value })}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select type" />
                 </SelectTrigger>
@@ -362,16 +374,16 @@ export default function FleetManagement() {
             </div>
             <div className="space-y-2">
               <Label>Capacity (kg)</Label>
-              <Input 
+              <Input
                 type="number"
                 placeholder="e.g., 5000"
                 value={formData.capacity}
-                onChange={(e) => setFormData({...formData, capacity: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, capacity: e.target.value })}
               />
             </div>
             <div className="space-y-2">
               <Label>Status</Label>
-              <Select value={formData.status} onValueChange={(value) => setFormData({...formData, status: value})}>
+              <Select value={formData.status} onValueChange={(value) => setFormData({ ...formData, status: value })}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -404,14 +416,14 @@ export default function FleetManagement() {
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <Label>Vehicle Number</Label>
-              <Input 
+              <Input
                 value={formData.vehicle_number}
-                onChange={(e) => setFormData({...formData, vehicle_number: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, vehicle_number: e.target.value })}
               />
             </div>
             <div className="space-y-2">
               <Label>Vehicle Type</Label>
-              <Select value={formData.type} onValueChange={(value) => setFormData({...formData, type: value})}>
+              <Select value={formData.type} onValueChange={(value) => setFormData({ ...formData, type: value })}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -425,15 +437,15 @@ export default function FleetManagement() {
             </div>
             <div className="space-y-2">
               <Label>Capacity (kg)</Label>
-              <Input 
+              <Input
                 type="number"
                 value={formData.capacity}
-                onChange={(e) => setFormData({...formData, capacity: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, capacity: e.target.value })}
               />
             </div>
             <div className="space-y-2">
               <Label>Status</Label>
-              <Select value={formData.status} onValueChange={(value) => setFormData({...formData, status: value})}>
+              <Select value={formData.status} onValueChange={(value) => setFormData({ ...formData, status: value })}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
