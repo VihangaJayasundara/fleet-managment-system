@@ -180,7 +180,7 @@ export default function RouteManagement() {
         </Card>
         <Card className="border-border bg-card">
           <CardContent className="p-4 flex items-center gap-4">
-            <div className="h-10 w-10 rounded-lg bg-red-500/20 flex items-center justify-center">
+            <div className="h-10 w-10 rounded-lg bg-red-500/10 flex items-center justify-center">
               <AlertTriangle className="h-5 w-5 text-red-500" />
             </div>
             <div>
@@ -191,8 +191,8 @@ export default function RouteManagement() {
         </Card>
         <Card className="border-border bg-card">
           <CardContent className="p-4 flex items-center gap-4">
-            <div className="h-10 w-10 rounded-lg bg-green-500/20 flex items-center justify-center">
-              <Route className="h-5 w-5 text-green-400" />
+            <div className="h-10 w-10 rounded-lg bg-green-500/10 flex items-center justify-center">
+              <Route className="h-5 w-5 text-green-500" />
             </div>
             <div>
               <p className="text-2xl font-bold text-foreground">{routes.filter(r => r.status === 'Active').length}</p>
@@ -202,8 +202,8 @@ export default function RouteManagement() {
         </Card>
         <Card className="border-border bg-card">
           <CardContent className="p-4 flex items-center gap-4">
-            <div className="h-10 w-10 rounded-lg bg-accent/20 flex items-center justify-center">
-              <Package className="h-5 w-5 text-accent" />
+            <div className="h-10 w-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
+              <Package className="h-5 w-5 text-blue-500" />
             </div>
             <div>
               <p className="text-2xl font-bold text-foreground">{parcels.filter(p => p.status === 'In Transit').length}</p>
@@ -225,7 +225,7 @@ export default function RouteManagement() {
           </Button>
         </Tabs>
       </div>
-      
+
       <Tabs defaultValue="routes" className="w-full">
         <TabsList className="bg-muted border border-border">
           <TabsTrigger value="routes">Routes</TabsTrigger>
@@ -247,14 +247,14 @@ export default function RouteManagement() {
                   <svg className="w-full h-full" viewBox="0 0 800 400">
                     {/* Grid lines */}
                     {Array.from({ length: 20 }).map((_, i) => (
-                      <line key={`h-${i}`} x1="0" y1={i * 20} x2="800" y2={i * 20} stroke="#3f3f46" strokeWidth="0.5" />
+                      <line key={`h-${i}`} x1="0" y1={i * 20} x2="800" y2={i * 20} stroke="currentColor" className="text-border" strokeWidth="0.5" />
                     ))}
                     {Array.from({ length: 40 }).map((_, i) => (
-                      <line key={`v-${i}`} x1={i * 20} y1="0" x2={i * 20} y2="400" stroke="#3f3f46" strokeWidth="0.5" />
+                      <line key={`v-${i}`} x1={i * 20} y1="0" x2={i * 20} y2="400" stroke="currentColor" className="text-border" strokeWidth="0.5" />
                     ))}
                     {/* Route lines */}
-                    <path d="M 200 300 Q 300 250 400 200 T 600 150" stroke="#71717a" strokeWidth="2" fill="none" strokeDasharray="5,5" />
-                    <path d="M 200 300 Q 250 320 300 350 T 150 280" stroke="#71717a" strokeWidth="2" fill="none" strokeDasharray="5,5" />
+                    <path d="M 200 300 Q 300 250 400 200 T 600 150" stroke="currentColor" className="text-muted-foreground/30" strokeWidth="2" fill="none" strokeDasharray="5,5" />
+                    <path d="M 200 300 Q 250 320 300 350 T 150 280" stroke="currentColor" className="text-muted-foreground/30" strokeWidth="2" fill="none" strokeDasharray="5,5" />
                   </svg>
                 </div>
                 <div className="text-center z-10">
@@ -270,12 +270,12 @@ export default function RouteManagement() {
                   { x: '75%', y: '37.5%', label: 'Jaffna' },
                   { x: '18.75%', y: '70%', label: 'Negombo' },
                 ].map((loc, idx) => (
-                  <div 
+                  <div
                     key={idx}
                     className="absolute flex flex-col items-center"
                     style={{ left: loc.x, top: loc.y, transform: 'translate(-50%, -50%)' }}
                   >
-                    <div className="h-3 w-3 rounded-full bg-accent border-2 border-border" />
+                    <div className="h-3 w-3 rounded-full bg-primary border-2 border-white shadow-sm" />
                     <span className="text-xs text-muted-foreground mt-1 whitespace-nowrap">{loc.label}</span>
                   </div>
                 ))}
@@ -315,16 +315,16 @@ export default function RouteManagement() {
                     </div>
                     <div className="flex items-center gap-2">
                       {getPriorityBadge(route.priority)}
-                      <Button 
-                        variant="ghost" 
+                      <Button
+                        variant="ghost"
                         size="icon"
                         onClick={() => openEditDialog(route)}
                         className="h-8 w-8 text-muted-foreground hover:text-foreground"
                       >
                         <Pencil className="h-4 w-4" />
                       </Button>
-                      <Button 
-                        variant="ghost" 
+                      <Button
+                        variant="ghost"
                         size="icon"
                         onClick={() => openDeleteDialog(route)}
                         className="h-8 w-8 text-muted-foreground hover:text-red-500"
@@ -356,9 +356,8 @@ export default function RouteManagement() {
                       {route.stops_data?.map((stop, idx) => (
                         <div key={idx} className="flex items-center gap-2">
                           <div className="flex flex-col items-center">
-                            <div className={`h-8 w-8 rounded-full flex items-center justify-center text-xs font-medium ${
-                              stop.type === 'Start' ? 'bg-primary text-primary-foreground' : 'bg-muted text-foreground'
-                            }`}>
+                            <div className={`h-8 w-8 rounded-full flex items-center justify-center text-xs font-medium ${stop.type === 'Start' ? 'bg-primary text-primary-foreground' : 'bg-muted text-foreground'
+                              }`}>
                               {idx + 1}
                             </div>
                           </div>
@@ -430,59 +429,59 @@ export default function RouteManagement() {
           <div className="space-y-4 py-4 max-h-[60vh] overflow-y-auto">
             <div className="space-y-2">
               <Label>Route Number</Label>
-              <Input 
+              <Input
                 placeholder="e.g., ROUTE-003"
                 value={formData.route_number}
-                onChange={(e) => setFormData({...formData, route_number: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, route_number: e.target.value })}
               />
             </div>
             <div className="space-y-2">
               <Label>Route Name</Label>
-              <Input 
+              <Input
                 placeholder="e.g., Colombo → Kandy → Jaffna"
                 value={formData.name}
-                onChange={(e) => setFormData({...formData, name: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Start Location</Label>
-                <Input 
+                <Input
                   placeholder="e.g., Colombo Warehouse"
                   value={formData.start_location}
-                  onChange={(e) => setFormData({...formData, start_location: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, start_location: e.target.value })}
                 />
               </div>
               <div className="space-y-2">
                 <Label>End Location</Label>
-                <Input 
+                <Input
                   placeholder="e.g., Jaffna"
                   value={formData.end_location}
-                  onChange={(e) => setFormData({...formData, end_location: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, end_location: e.target.value })}
                 />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Distance</Label>
-                <Input 
+                <Input
                   placeholder="e.g., 450 km"
                   value={formData.distance}
-                  onChange={(e) => setFormData({...formData, distance: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, distance: e.target.value })}
                 />
               </div>
               <div className="space-y-2">
                 <Label>Estimated Time</Label>
-                <Input 
+                <Input
                   placeholder="e.g., 8 hours"
                   value={formData.estimated_time}
-                  onChange={(e) => setFormData({...formData, estimated_time: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, estimated_time: e.target.value })}
                 />
               </div>
             </div>
             <div className="space-y-2">
               <Label>Priority</Label>
-              <Select value={formData.priority} onValueChange={(value) => setFormData({...formData, priority: value})}>
+              <Select value={formData.priority} onValueChange={(value) => setFormData({ ...formData, priority: value })}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -506,7 +505,7 @@ export default function RouteManagement() {
               </div>
               {stopsData.map((stop, idx) => (
                 <div key={idx} className="grid grid-cols-4 gap-2 p-3 bg-card rounded-lg border border-border">
-                  <Input 
+                  <Input
                     placeholder="Location"
                     value={stop.location}
                     onChange={(e) => updateStop(idx, 'location', e.target.value)}
@@ -521,7 +520,7 @@ export default function RouteManagement() {
                       <SelectItem value="Pickup">Pickup</SelectItem>
                     </SelectContent>
                   </Select>
-                  <Input 
+                  <Input
                     placeholder="Time"
                     value={stop.estimated_time}
                     onChange={(e) => updateStop(idx, 'estimated_time', e.target.value)}
@@ -558,46 +557,46 @@ export default function RouteManagement() {
             </div>
             <div className="space-y-2">
               <Label>Route Name</Label>
-              <Input 
+              <Input
                 value={formData.name}
-                onChange={(e) => setFormData({...formData, name: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Start Location</Label>
-                <Input 
+                <Input
                   value={formData.start_location}
-                  onChange={(e) => setFormData({...formData, start_location: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, start_location: e.target.value })}
                 />
               </div>
               <div className="space-y-2">
                 <Label>End Location</Label>
-                <Input 
+                <Input
                   value={formData.end_location}
-                  onChange={(e) => setFormData({...formData, end_location: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, end_location: e.target.value })}
                 />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Distance</Label>
-                <Input 
+                <Input
                   value={formData.distance}
-                  onChange={(e) => setFormData({...formData, distance: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, distance: e.target.value })}
                 />
               </div>
               <div className="space-y-2">
                 <Label>Estimated Time</Label>
-                <Input 
+                <Input
                   value={formData.estimated_time}
-                  onChange={(e) => setFormData({...formData, estimated_time: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, estimated_time: e.target.value })}
                 />
               </div>
             </div>
             <div className="space-y-2">
               <Label>Priority</Label>
-              <Select value={formData.priority} onValueChange={(value) => setFormData({...formData, priority: value})}>
+              <Select value={formData.priority} onValueChange={(value) => setFormData({ ...formData, priority: value })}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -621,7 +620,7 @@ export default function RouteManagement() {
               </div>
               {stopsData.map((stop, idx) => (
                 <div key={idx} className="grid grid-cols-4 gap-2 p-3 bg-card rounded-lg border border-border">
-                  <Input 
+                  <Input
                     placeholder="Location"
                     value={stop.location}
                     onChange={(e) => updateStop(idx, 'location', e.target.value)}
@@ -636,7 +635,7 @@ export default function RouteManagement() {
                       <SelectItem value="Pickup">Pickup</SelectItem>
                     </SelectContent>
                   </Select>
-                  <Input 
+                  <Input
                     placeholder="Time"
                     value={stop.estimated_time}
                     onChange={(e) => updateStop(idx, 'estimated_time', e.target.value)}

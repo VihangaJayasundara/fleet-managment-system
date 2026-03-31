@@ -33,7 +33,8 @@ export default function ParcelManagement() {
     destination: '',
     status: 'Picked Up',
     driver_id: '',
-    vehicle_id: ''
+    vehicle_id: '',
+    weight: ''
   })
 
   // Fetch data from database
@@ -69,7 +70,7 @@ export default function ParcelManagement() {
       await parcelsAPI.create(data)
       await fetchData()
       setIsAddDialogOpen(false)
-      setFormData({ tracking_id: '', origin: '', destination: '', status: 'Picked Up', driver_id: '', vehicle_id: '' })
+      setFormData({ tracking_id: '', origin: '', destination: '', status: 'Picked Up', driver_id: '', vehicle_id: '', weight: '' })
     } catch (error) {
       console.error('Error adding parcel:', error)
       alert('Failed to add parcel')
@@ -82,7 +83,7 @@ export default function ParcelManagement() {
       await fetchData()
       setIsEditDialogOpen(false)
       setSelectedParcel(null)
-      setFormData({ tracking_id: '', origin: '', destination: '', status: 'Picked Up', driver_id: '', vehicle_id: '' })
+      setFormData({ tracking_id: '', origin: '', destination: '', status: 'Picked Up', driver_id: '', vehicle_id: '', weight: '' })
     } catch (error) {
       console.error('Error updating parcel:', error)
       alert('Failed to update parcel')
@@ -109,7 +110,8 @@ export default function ParcelManagement() {
       destination: parcel.destination,
       status: parcel.status,
       driver_id: parcel.driver_id || '',
-      vehicle_id: parcel.vehicle_id || ''
+      vehicle_id: parcel.vehicle_id || '',
+      weight: parcel.weight || ''
     })
     setIsEditDialogOpen(true)
   }
@@ -166,8 +168,8 @@ export default function ParcelManagement() {
         </Card>
         <Card className="border-border bg-card">
           <CardContent className="p-4 flex items-center gap-4">
-            <div className="h-10 w-10 rounded-lg bg-yellow-900/30 flex items-center justify-center">
-              <Clock className="h-5 w-5 text-yellow-400" />
+            <div className="h-10 w-10 rounded-lg bg-yellow-500/10 flex items-center justify-center">
+              <Clock className="h-5 w-5 text-yellow-500" />
             </div>
             <div>
               <p className="text-2xl font-bold text-foreground">{parcels.filter(p => p.status === 'Pending').length}</p>
@@ -177,8 +179,8 @@ export default function ParcelManagement() {
         </Card>
         <Card className="border-border bg-card">
           <CardContent className="p-4 flex items-center gap-4">
-            <div className="h-10 w-10 rounded-lg bg-blue-900/30 flex items-center justify-center">
-              <Truck className="h-5 w-5 text-blue-400" />
+            <div className="h-10 w-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
+              <Truck className="h-5 w-5 text-blue-500" />
             </div>
             <div>
               <p className="text-2xl font-bold text-foreground">{parcels.filter(p => p.status === 'In Transit').length}</p>
@@ -188,8 +190,8 @@ export default function ParcelManagement() {
         </Card>
         <Card className="border-border bg-card">
           <CardContent className="p-4 flex items-center gap-4">
-            <div className="h-10 w-10 rounded-lg bg-green-900/30 flex items-center justify-center">
-              <CheckCircle className="h-5 w-5 text-green-400" />
+            <div className="h-10 w-10 rounded-lg bg-green-500/10 flex items-center justify-center">
+              <CheckCircle className="h-5 w-5 text-green-500" />
             </div>
             <div>
               <p className="text-2xl font-bold text-foreground">{parcels.filter(p => p.status === 'Delivered').length}</p>
@@ -216,8 +218,7 @@ export default function ParcelManagement() {
                     <TableHead>Origin</TableHead>
                     <TableHead>Destination</TableHead>
                     <TableHead>Status</TableHead>
-                    <TableHead>Driver</TableHead>
-                    <TableHead>Vehicle</TableHead>
+                    <TableHead>Weight</TableHead>
                     <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -228,20 +229,19 @@ export default function ParcelManagement() {
                       <TableCell>{parcel.origin}</TableCell>
                       <TableCell>{parcel.destination}</TableCell>
                       <TableCell>{getStatusBadge(parcel.status)}</TableCell>
-                      <TableCell>{parcel.driver_name || 'Unassigned'}</TableCell>
-                      <TableCell>{parcel.vehicle_number || 'Unassigned'}</TableCell>
+                      <TableCell>{parcel.weight ? `${parcel.weight} kg` : '-'}</TableCell>
                       <TableCell>
                         <div className="flex gap-2">
-                          <Button 
-                            variant="ghost" 
+                          <Button
+                            variant="ghost"
                             size="icon"
                             onClick={() => openEditDialog(parcel)}
-                            className="h-8 w-8 text-muted-foreground hover:text-white"
+                            className="h-8 w-8 text-muted-foreground hover:text-primary"
                           >
                             <Pencil className="h-4 w-4" />
                           </Button>
-                          <Button 
-                            variant="ghost" 
+                          <Button
+                            variant="ghost"
                             size="icon"
                             onClick={() => openDeleteDialog(parcel)}
                             className="h-8 w-8 text-muted-foreground hover:text-red-500"
@@ -266,7 +266,10 @@ export default function ParcelManagement() {
                   <div className="flex items-center justify-between">
                     <div>
                       <CardTitle className="text-base font-mono">{parcel.tracking_id}</CardTitle>
-                      <p className="text-sm text-muted-foreground">Driver: {parcel.driver_name || 'Unassigned'}</p>
+                      <p className="text-sm text-muted-foreground">
+                        Driver: {parcel.driver_name || 'Unassigned'}
+                        {parcel.weight ? ` • Weight: ${parcel.weight} kg` : ''}
+                      </p>
                     </div>
                     {getStatusBadge(parcel.status)}
                   </div>
@@ -345,35 +348,46 @@ export default function ParcelManagement() {
             <DialogDescription>Enter parcel details to create a new order</DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label>Tracking ID</Label>
-              <Input 
-                placeholder="Auto-generated if empty"
-                value={formData.tracking_id}
-                onChange={(e) => setFormData({...formData, tracking_id: e.target.value})}
-              />
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Tracking ID</Label>
+                <Input
+                  placeholder="Auto-generated if empty"
+                  value={formData.tracking_id}
+                  onChange={(e) => setFormData({ ...formData, tracking_id: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Weight (kg)</Label>
+                <Input
+                  type="number"
+                  placeholder="e.g., 500"
+                  value={formData.weight}
+                  onChange={(e) => setFormData({ ...formData, weight: parseFloat(e.target.value) || '' })}
+                />
+              </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Origin</Label>
-                <Input 
+                <Input
                   placeholder="Origin city"
                   value={formData.origin}
-                  onChange={(e) => setFormData({...formData, origin: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, origin: e.target.value })}
                 />
               </div>
               <div className="space-y-2">
                 <Label>Destination</Label>
-                <Input 
+                <Input
                   placeholder="Destination city"
                   value={formData.destination}
-                  onChange={(e) => setFormData({...formData, destination: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, destination: e.target.value })}
                 />
               </div>
             </div>
             <div className="space-y-2">
               <Label>Status</Label>
-              <Select value={formData.status} onValueChange={(value) => setFormData({...formData, status: value})}>
+              <Select value={formData.status} onValueChange={(value) => setFormData({ ...formData, status: value })}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -385,34 +399,7 @@ export default function ParcelManagement() {
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-2">
-              <Label>Assign Driver</Label>
-              <Select value={formData.driver_id} onValueChange={(value) => setFormData({...formData, driver_id: value})}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select driver" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="">None</SelectItem>
-                  {drivers.filter(d => d.status === 'Active').map((driver) => (
-                    <SelectItem key={driver.id} value={driver.id.toString()}>{driver.name}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label>Assign Vehicle</Label>
-              <Select value={formData.vehicle_id} onValueChange={(value) => setFormData({...formData, vehicle_id: value})}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select vehicle" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="">None</SelectItem>
-                  {vehicles.filter(v => v.status === 'Active').map((vehicle) => (
-                    <SelectItem key={vehicle.id} value={vehicle.id.toString()}>{vehicle.vehicle_number}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsAddDialogOpen(false)} className="border-border text-foreground">
@@ -433,29 +420,40 @@ export default function ParcelManagement() {
             <DialogDescription>Update parcel information</DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label>Tracking ID</Label>
-              <Input value={formData.tracking_id} disabled />
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Tracking ID</Label>
+                <Input value={formData.tracking_id} disabled />
+              </div>
+              <div className="space-y-2">
+                <Label>Weight (kg)</Label>
+                <Input
+                  type="number"
+                  placeholder="e.g., 500"
+                  value={formData.weight}
+                  onChange={(e) => setFormData({ ...formData, weight: parseFloat(e.target.value) || '' })}
+                />
+              </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Origin</Label>
-                <Input 
+                <Input
                   value={formData.origin}
-                  onChange={(e) => setFormData({...formData, origin: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, origin: e.target.value })}
                 />
               </div>
               <div className="space-y-2">
                 <Label>Destination</Label>
-                <Input 
+                <Input
                   value={formData.destination}
-                  onChange={(e) => setFormData({...formData, destination: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, destination: e.target.value })}
                 />
               </div>
             </div>
             <div className="space-y-2">
               <Label>Status</Label>
-              <Select value={formData.status} onValueChange={(value) => setFormData({...formData, status: value})}>
+              <Select value={formData.status} onValueChange={(value) => setFormData({ ...formData, status: value })}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -464,34 +462,6 @@ export default function ParcelManagement() {
                   <SelectItem value="In Transit">In Transit</SelectItem>
                   <SelectItem value="Delivered">Delivered</SelectItem>
                   <SelectItem value="Cancelled">Cancelled</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label>Assign Driver</Label>
-              <Select value={formData.driver_id} onValueChange={(value) => setFormData({...formData, driver_id: value})}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select driver" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="">None</SelectItem>
-                  {drivers.filter(d => d.status === 'Active').map((driver) => (
-                    <SelectItem key={driver.id} value={driver.id.toString()}>{driver.name}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label>Assign Vehicle</Label>
-              <Select value={formData.vehicle_id} onValueChange={(value) => setFormData({...formData, vehicle_id: value})}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select vehicle" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="">None</SelectItem>
-                  {vehicles.filter(v => v.status === 'Active').map((vehicle) => (
-                    <SelectItem key={vehicle.id} value={vehicle.id.toString()}>{vehicle.vehicle_number}</SelectItem>
-                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -528,6 +498,6 @@ export default function ParcelManagement() {
       </Dialog>
 
 
-    </div>
+    </div >
   )
 }
