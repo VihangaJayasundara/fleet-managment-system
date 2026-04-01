@@ -1,45 +1,32 @@
-# System specific
+# Dependencies
+node_modules/
+*/node_modules/
+
+# Build output
+logilink-360/dist/
+backend/dist/
+
+# Environment variables
+backend/.env
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+dev_output.log
+
+# IDE / Editor
+/.qoder
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
 .DS_Store
 Thumbs.db
 
-# IDEs
-.vscode/
-.idea/
-*.iml
-
-# Node / React
-node_modules/
-dist/
-build/
-.env
-.env.local
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-env/
-venv/
-.env
-.pytest_cache/
-sri_lankan_employee_ner_dataset.json
-
-# Ballerina
-target/
-Config.toml
-Dependencies.toml
-
-# Docker
-docker-compose.override.yml
-
-# Environment Variables (Safety catch-all)
-*.env
-# *.html
-*.pdf
-.env*
-!.env.example
+# Misc
+/New fol
