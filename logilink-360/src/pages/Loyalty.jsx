@@ -23,10 +23,10 @@ const tierBenefits = [
 
 const getTierBadge = (tier) => {
   const colors = {
-    'Platinum': 'bg-slate-200 text-slate-900',
-    'Gold': 'bg-yellow-500/20 text-yellow-400 border-yellow-500/50',
-    'Silver': 'bg-slate-500/20 text-slate-300 border-slate-500/50',
-    'Bronze': 'bg-amber-600/20 text-amber-400 border-amber-600/50',
+    'Platinum': 'bg-slate-500/20 text-slate-300 border-slate-500/30',
+    'Gold': 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20',
+    'Silver': 'bg-slate-400/10 text-slate-400 border-slate-400/20',
+    'Bronze': 'bg-amber-500/10 text-amber-500 border-amber-500/20',
     'Member': 'bg-muted text-muted-foreground'
   }
   return <Badge className={colors[tier] || ''}>{tier}</Badge>
@@ -71,7 +71,7 @@ export default function Loyalty() {
         purchases: parseInt(formData.purchases) || 0,
         total_spent: parseFloat(formData.total_spent) || 0
       }
-      
+
       if (editingCustomer) {
         await customersAPI.update(editingCustomer.id, submitData)
       } else {
@@ -164,7 +164,7 @@ export default function Loyalty() {
         </div>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button 
+            <Button
               className="bg-primary text-primary-foreground hover:bg-primary/90"
               onClick={() => {
                 setEditingCustomer(null)
@@ -260,8 +260,8 @@ export default function Loyalty() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="tier">Tier</Label>
-                  <Select 
-                    value={formData.tier} 
+                  <Select
+                    value={formData.tier}
                     onValueChange={(value) => setFormData({ ...formData, tier: value })}
                   >
                     <SelectTrigger className="bg-card border-border text-foreground">
@@ -286,9 +286,9 @@ export default function Loyalty() {
                 <Button type="submit" className="bg-primary text-primary-foreground hover:bg-primary/90">
                   {editingCustomer ? 'Update' : 'Add'} Customer
                 </Button>
-                <Button 
-                  type="button" 
-                  variant="outline" 
+                <Button
+                  type="button"
+                  variant="outline"
                   onClick={() => setIsDialogOpen(false)}
                   className="border-border text-foreground"
                 >
@@ -315,8 +315,8 @@ export default function Loyalty() {
         </Card>
         <Card className="border-border bg-card">
           <CardContent className="p-4 flex items-center gap-4">
-            <div className="h-10 w-10 rounded-lg bg-yellow-500/20 flex items-center justify-center">
-              <Crown className="h-5 w-5 text-yellow-400" />
+            <div className="h-10 w-10 rounded-lg bg-yellow-500/10 flex items-center justify-center">
+              <Crown className="h-5 w-5 text-yellow-500" />
             </div>
             <div>
               <p className="text-2xl font-bold text-foreground">{customers.filter(c => ['Gold', 'Platinum'].includes(c.tier)).length}</p>
@@ -326,8 +326,8 @@ export default function Loyalty() {
         </Card>
         <Card className="border-border bg-card">
           <CardContent className="p-4 flex items-center gap-4">
-            <div className="h-10 w-10 rounded-lg bg-green-500/20 flex items-center justify-center">
-              <Percent className="h-5 w-5 text-green-400" />
+            <div className="h-10 w-10 rounded-lg bg-green-500/10 flex items-center justify-center">
+              <Percent className="h-5 w-5 text-green-500" />
             </div>
             <div>
               <p className="text-2xl font-bold text-foreground">
@@ -339,8 +339,8 @@ export default function Loyalty() {
         </Card>
         <Card className="border-border bg-card">
           <CardContent className="p-4 flex items-center gap-4">
-            <div className="h-10 w-10 rounded-lg bg-accent/20 flex items-center justify-center">
-              <Gift className="h-5 w-5 text-accent" />
+            <div className="h-10 w-10 rounded-lg bg-blue-100 flex items-center justify-center">
+              <Gift className="h-5 w-5 text-blue-600" />
             </div>
             <div>
               <p className="text-2xl font-bold text-foreground">
@@ -352,8 +352,8 @@ export default function Loyalty() {
         </Card>
         <Card className="border-border bg-card">
           <CardContent className="p-4 flex items-center gap-4">
-            <div className="h-10 w-10 rounded-lg bg-accent/20 flex items-center justify-center">
-              <ShoppingBag className="h-5 w-5 text-accent" />
+            <div className="h-10 w-10 rounded-lg bg-blue-100 flex items-center justify-center">
+              <ShoppingBag className="h-5 w-5 text-blue-600" />
             </div>
             <div>
               <p className="text-2xl font-bold text-foreground">
@@ -414,7 +414,7 @@ export default function Loyalty() {
                       </TableCell>
                       <TableCell>
                         <div className="flex flex-col">
-                          <span className="text-green-400 font-medium">{customer.discount_percent}% OFF</span>
+                          <span className="text-green-600 font-medium">{customer.discount_percent}% OFF</span>
                           <span className="text-xs text-muted-foreground">
                             Save Rs. {Math.round(customer.total_spent * customer.discount_percent / 100).toLocaleString()}
                           </span>
@@ -445,25 +445,25 @@ export default function Loyalty() {
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          <Button 
-                            variant="ghost" 
+                          <Button
+                            variant="ghost"
                             size="sm"
                             onClick={() => handleAddPurchase(customer.id)}
-                            className="text-green-400 hover:text-green-300"
+                            className="text-green-600 hover:text-green-500"
                           >
                             <ShoppingBag className="h-4 w-4 mr-1" />
                             +1
                           </Button>
-                          <Button 
-                            variant="ghost" 
+                          <Button
+                            variant="ghost"
                             size="icon"
                             onClick={() => handleEdit(customer)}
                             className="text-muted-foreground hover:text-foreground"
                           >
                             <Pencil className="h-4 w-4" />
                           </Button>
-                          <Button 
-                            variant="ghost" 
+                          <Button
+                            variant="ghost"
                             size="icon"
                             onClick={() => handleDelete(customer.id)}
                             className="text-muted-foreground hover:text-red-500"
@@ -483,58 +483,52 @@ export default function Loyalty() {
         <TabsContent value="tiers" className="mt-4">
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {tierBenefits.map((tier) => (
-              <Card key={tier.tier} className={`border-border ${
-                tier.tier === 'Platinum' ? 'bg-slate-200' : 
-                tier.tier === 'Gold' ? 'bg-yellow-500/10' : 
-                'bg-card'
-              }`}>
+              <Card key={tier.tier} className={`border-border ${tier.tier === 'Platinum' ? 'bg-slate-500/10 shadow-lg shadow-blue-500/5' :
+                tier.tier === 'Gold' ? 'bg-yellow-500/5' :
+                  'bg-card'
+                }`}>
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      {tier.tier === 'Platinum' && <Crown className="h-5 w-5 text-slate-900" />}
-                      {tier.tier === 'Gold' && <Star className="h-5 w-5 text-yellow-400" />}
+                      {tier.tier === 'Platinum' && <Crown className="h-5 w-5 text-slate-400" />}
+                      {tier.tier === 'Gold' && <Star className="h-5 w-5 text-yellow-500" />}
                       {(tier.tier === 'Silver' || tier.tier === 'Bronze') && <Gift className="h-5 w-5 text-muted-foreground" />}
-                      <CardTitle className={`text-base ${tier.tier === 'Platinum' ? 'text-slate-900' : 'text-foreground'}`}>
+                      <CardTitle className={`text-base ${tier.tier === 'Platinum' ? 'text-slate-200' : 'text-foreground'}`}>
                         {tier.tier}
                       </CardTitle>
                     </div>
-                    <span className={`text-2xl font-bold ${
-                      tier.tier === 'Platinum' ? 'text-slate-900' : 'text-foreground'
-                    }`}>
+                    <span className={`text-2xl font-bold ${tier.tier === 'Platinum' ? 'text-slate-200' : 'text-foreground'
+                      }`}>
                       {tier.discount}%
                     </span>
                   </div>
-                  <p className={`text-sm ${tier.tier === 'Platinum' ? 'text-slate-600' : 'text-muted-foreground'}`}>
+                  <p className={`text-sm ${tier.tier === 'Platinum' ? 'text-slate-400' : 'text-muted-foreground'}`}>
                     Minimum {tier.minPurchases} purchases
                   </p>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
-                    <p className={`text-xs font-medium uppercase tracking-wider ${
-                      tier.tier === 'Platinum' ? 'text-slate-600' : 'text-muted-foreground'
-                    }`}>
+                    <p className={`text-xs font-medium uppercase tracking-wider ${tier.tier === 'Platinum' ? 'text-slate-400' : 'text-muted-foreground'
+                      }`}>
                       Benefits
                     </p>
                     <ul className="space-y-2">
                       {tier.benefits.map((benefit, idx) => (
-                        <li key={idx} className={`flex items-center gap-2 text-sm ${
-                          tier.tier === 'Platinum' ? 'text-slate-800' : 'text-foreground'
-                        }`}>
-                          <div className={`h-1.5 w-1.5 rounded-full ${
-                            tier.tier === 'Platinum' ? 'bg-slate-400' : 'bg-muted-foreground'
-                          }`} />
+                        <li key={idx} className={`flex items-center gap-2 text-sm ${tier.tier === 'Platinum' ? 'text-slate-300' : 'text-foreground'
+                          }`}>
+                          <div className={`h-1.5 w-1.5 rounded-full ${tier.tier === 'Platinum' ? 'bg-slate-500' : 'bg-muted-foreground'
+                            }`} />
                           {benefit}
                         </li>
                       ))}
                     </ul>
                   </div>
-                  <div className={`mt-4 pt-4 border-t ${
-                    tier.tier === 'Platinum' ? 'border-slate-300' : 'border-border'
-                  }`}>
-                    <p className={`text-xs ${tier.tier === 'Platinum' ? 'text-slate-600' : 'text-muted-foreground'}`}>
+                  <div className={`mt-4 pt-4 border-t ${tier.tier === 'Platinum' ? 'border-slate-500/20' : 'border-border'
+                    }`}>
+                    <p className={`text-xs ${tier.tier === 'Platinum' ? 'text-slate-400' : 'text-muted-foreground'}`}>
                       Potential Savings
                     </p>
-                    <p className={`text-lg font-semibold ${tier.tier === 'Platinum' ? 'text-slate-900' : 'text-green-400'}`}>
+                    <p className={`text-lg font-semibold ${tier.tier === 'Platinum' ? 'text-slate-200' : 'text-green-500'}`}>
                       Up to {tier.discount}% off every order
                     </p>
                   </div>
@@ -564,8 +558,8 @@ export default function Loyalty() {
                             <span className="text-foreground">{percentage}%</span>
                           </div>
                           <div className="h-2 bg-muted rounded-full overflow-hidden">
-                            <div 
-                              className="h-full bg-zinc-400 rounded-full"
+                            <div
+                              className="h-full bg-primary rounded-full"
                               style={{ width: `${percentage}%` }}
                             />
                           </div>
@@ -584,7 +578,7 @@ export default function Loyalty() {
                 <div className="space-y-4">
                   <div className="p-4 bg-card rounded-xl border border-border">
                     <div className="flex items-center gap-2 mb-2">
-                      <TrendingUp className="h-4 w-4 text-green-400" />
+                      <TrendingUp className="h-4 w-4 text-green-600" />
                       <span className="font-medium text-foreground">Revenue Impact</span>
                     </div>
                     <p className="text-sm text-muted-foreground">
@@ -593,7 +587,7 @@ export default function Loyalty() {
                   </div>
                   <div className="p-4 bg-card rounded-xl border border-border">
                     <div className="flex items-center gap-2 mb-2">
-                      <Gift className="h-4 w-4 text-yellow-400" />
+                      <Gift className="h-4 w-4 text-yellow-600" />
                       <span className="font-medium text-foreground">Redemption Rate</span>
                     </div>
                     <p className="text-sm text-muted-foreground">
@@ -602,7 +596,7 @@ export default function Loyalty() {
                   </div>
                   <div className="p-4 bg-card rounded-xl border border-border">
                     <div className="flex items-center gap-2 mb-2">
-                      <Crown className="h-4 w-4 text-blue-400" />
+                      <Crown className="h-4 w-4 text-blue-600" />
                       <span className="font-medium text-foreground">Retention</span>
                     </div>
                     <p className="text-sm text-muted-foreground">

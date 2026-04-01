@@ -24,11 +24,10 @@ const StarRating = ({ rating, size = 'sm', onRate }) => {
           className={onRate ? 'cursor-pointer hover:scale-110 transition-transform' : 'cursor-default'}
         >
           <Star
-            className={`${sizeClass} ${
-              star <= rating 
-                ? 'fill-yellow-400 text-yellow-400' 
-                : 'fill-transparent text-muted-foreground/30'
-            }`}
+            className={`${sizeClass} ${star <= rating
+              ? 'fill-yellow-500 text-yellow-500'
+              : 'fill-transparent text-muted-foreground/30'
+              }`}
           />
         </button>
       ))}
@@ -153,10 +152,10 @@ export default function Reviews() {
     })
   }
 
-  const averageRating = reviews.length > 0 
+  const averageRating = reviews.length > 0
     ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
     : '0.0'
-  
+
   const ratingDistribution = [5, 4, 3, 2, 1].map(stars => ({
     stars,
     count: reviews.filter(r => r.rating === stars).length,
@@ -184,7 +183,7 @@ export default function Reviews() {
         </div>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button 
+            <Button
               className="bg-primary text-primary-foreground hover:bg-primary/90"
               onClick={() => {
                 setEditingReview(null)
@@ -218,8 +217,8 @@ export default function Reviews() {
               </div>
               <div>
                 <Label htmlFor="driver">Driver</Label>
-                <Select 
-                  value={formData.driver_id} 
+                <Select
+                  value={formData.driver_id}
                   onValueChange={(value) => setFormData({ ...formData, driver_id: value })}
                 >
                   <SelectTrigger className="bg-card border-border text-foreground">
@@ -234,8 +233,8 @@ export default function Reviews() {
               </div>
               <div>
                 <Label htmlFor="parcel">Parcel</Label>
-                <Select 
-                  value={formData.parcel_id} 
+                <Select
+                  value={formData.parcel_id}
                   onValueChange={(value) => setFormData({ ...formData, parcel_id: value })}
                 >
                   <SelectTrigger className="bg-card border-border text-foreground">
@@ -263,9 +262,9 @@ export default function Reviews() {
                 <Button type="submit" className="bg-primary text-primary-foreground hover:bg-primary/90">
                   {editingReview ? 'Update' : 'Add'} Review
                 </Button>
-                <Button 
-                  type="button" 
-                  variant="outline" 
+                <Button
+                  type="button"
+                  variant="outline"
                   onClick={() => setIsDialogOpen(false)}
                   className="border-border text-foreground"
                 >
@@ -311,8 +310,8 @@ export default function Reviews() {
         </Card>
         <Card className="border-border bg-card">
           <CardContent className="p-4 flex items-center gap-4">
-            <div className="h-10 w-10 rounded-lg bg-green-500/20 flex items-center justify-center">
-              <ThumbsUp className="h-5 w-5 text-green-400" />
+            <div className="h-10 w-10 rounded-lg bg-green-500/10 flex items-center justify-center">
+              <ThumbsUp className="h-5 w-5 text-green-500" />
             </div>
             <div>
               <p className="text-2xl font-bold text-foreground">{reviews.filter(r => r.rating >= 4).length}</p>
@@ -322,8 +321,8 @@ export default function Reviews() {
         </Card>
         <Card className="border-border bg-card">
           <CardContent className="p-4 flex items-center gap-4">
-            <div className="h-10 w-10 rounded-lg bg-accent/20 flex items-center justify-center">
-              <TrendingUp className="h-5 w-5 text-accent" />
+            <div className="h-10 w-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
+              <TrendingUp className="h-5 w-5 text-blue-500" />
             </div>
             <div>
               <p className="text-2xl font-bold text-foreground">{reviews.length > 0 ? Math.round((reviews.filter(r => r.rating >= 4).length / reviews.length) * 100) : 0}%</p>
@@ -350,7 +349,7 @@ export default function Reviews() {
                   </div>
                   <h3 className="text-lg font-medium text-foreground mb-2">No Reviews Yet</h3>
                   <p className="text-muted-foreground mb-4">Start collecting customer feedback by adding your first review.</p>
-                  <Button 
+                  <Button
                     className="bg-primary text-primary-foreground hover:bg-primary/90"
                     onClick={() => {
                       setEditingReview(null)
@@ -390,7 +389,7 @@ export default function Reviews() {
                             <Truck className="h-4 w-4" />
                             <span>Driver: {review.driver_name || 'N/A'}</span>
                           </div>
-                          <button 
+                          <button
                             onClick={() => handleMarkHelpful(review.id)}
                             className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
                           >
@@ -401,16 +400,16 @@ export default function Reviews() {
                       </div>
                     </div>
                     <div className="flex gap-2">
-                      <Button 
-                        variant="ghost" 
+                      <Button
+                        variant="ghost"
                         size="icon"
                         onClick={() => handleEdit(review)}
                         className="text-muted-foreground hover:text-foreground"
                       >
                         <Pencil className="h-4 w-4" />
                       </Button>
-                      <Button 
-                        variant="ghost" 
+                      <Button
+                        variant="ghost"
                         size="icon"
                         onClick={() => openDeleteDialog(review.id)}
                         className="text-muted-foreground hover:text-red-500"
@@ -436,7 +435,7 @@ export default function Reviews() {
             <CardContent>
               <div className="space-y-6">
                 {driverRatings.map((driver, idx) => (
-                  <div key={idx} className="flex items-center gap-6 p-4 bg-muted/30 rounded-lg">
+                  <div key={idx} className="flex items-center gap-6 p-4 bg-muted rounded-lg border border-border/50">
                     <div className="flex items-center gap-3 w-48">
                       <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center">
                         <User className="h-5 w-5 text-muted-foreground" />
@@ -452,7 +451,7 @@ export default function Reviews() {
                         <span className="text-sm font-medium text-foreground">{driver.rating}</span>
                       </div>
                       <div className="h-2 bg-muted rounded-full overflow-hidden">
-                        <div 
+                        <div
                           className="h-full bg-accent rounded-full"
                           style={{ width: `${(driver.rating / 5) * 100}%` }}
                         />
@@ -480,8 +479,8 @@ export default function Reviews() {
                     <div key={item.stars} className="flex items-center gap-3">
                       <span className="text-sm text-muted-foreground w-8">{item.stars}★</span>
                       <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
-                        <div 
-                          className="h-full bg-zinc-400 rounded-full"
+                        <div
+                          className="h-full bg-primary rounded-full"
                           style={{ width: `${item.percentage}%` }}
                         />
                       </div>
@@ -499,21 +498,21 @@ export default function Reviews() {
                 <div className="space-y-4">
                   <div className="p-4 bg-card rounded-xl border border-border">
                     <div className="flex items-center gap-2 mb-2">
-                      <TrendingUp className="h-4 w-4 text-green-400" />
+                      <TrendingUp className="h-4 w-4 text-green-600" />
                       <span className="font-medium text-foreground">Top Positive</span>
                     </div>
                     <p className="text-sm text-muted-foreground">"Professional drivers" mentioned in 45% of 5-star reviews</p>
                   </div>
                   <div className="p-4 bg-card rounded-xl border border-border">
                     <div className="flex items-center gap-2 mb-2">
-                      <MessageSquare className="h-4 w-4 text-yellow-400" />
+                      <MessageSquare className="h-4 w-4 text-yellow-600" />
                       <span className="font-medium text-foreground">Common Feedback</span>
                     </div>
                     <p className="text-sm text-muted-foreground">"On-time delivery" is the most appreciated aspect</p>
                   </div>
                   <div className="p-4 bg-card rounded-xl border border-border">
                     <div className="flex items-center gap-2 mb-2">
-                      <Star className="h-4 w-4 text-blue-400" />
+                      <Star className="h-4 w-4 text-blue-600" />
                       <span className="font-medium text-foreground">Rating Trend</span>
                     </div>
                     <p className="text-sm text-muted-foreground">Average rating improved by 0.3 points this month</p>
@@ -535,14 +534,14 @@ export default function Reviews() {
             <p className="text-muted-foreground">Are you sure you want to delete this review? This action cannot be undone.</p>
           </div>
           <div className="flex gap-2 justify-end">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={() => setIsDeleteDialogOpen(false)}
               className="border-border text-foreground"
             >
               Cancel
             </Button>
-            <Button 
+            <Button
               onClick={handleDelete}
               className="bg-red-500 text-white hover:bg-red-600"
             >
