@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
 
+
 export default function TopNavbar() {
   return (
     <header className="sticky top-0 z-30 h-16 border-b border-border bg-card shadow-sm">
