@@ -10,6 +10,8 @@ import routeRoutes from './routes/routes.js';
 import reviewRoutes from './routes/reviews.js';
 import customerRoutes from './routes/customers.js';
 
+
+
 dotenv.config();
 
 const app = express();

@@ -11,6 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { vehiclesAPI } from '@/services/api'
 
+
 export default function FleetManagement() {
   const [vehicles, setVehicles] = useState([])
   const [loading, setLoading] = useState(true)

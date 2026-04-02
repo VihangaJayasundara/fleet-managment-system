@@ -1,5 +1,6 @@
 const API_BASE_URL = '/api';
 
+
 // Helper function for API calls
 async function fetchAPI(endpoint, options = {}) {
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
